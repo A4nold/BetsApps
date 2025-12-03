@@ -34,4 +34,17 @@ public class MarketsController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("{marketPubkey}/resolve")]
+    public async Task<ActionResult<ResolveMarketResponse>> Resolve(string marketPubkey, [FromBody] ResolveMarketRequest request)
+    {
+        var result = await _client.ResolveMarketAsync(marketPubkey, request.WinningOutcomeIndex);
+
+        var response = new ResolveMarketResponse(
+            result.MarketPubkey,
+            result.TransactionSignature
+        );
+
+        return Ok(response);
+    }
 }

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Solana.KeyStore" Version="8.7.0" />
     <PackageReference Include="Solana.Programs" Version="8.7.0" />
     <PackageReference Include="Solana.Rpc" Version="8.7.0" />
     <PackageReference Include="Solana.Wallet" Version="8.7.0" />
