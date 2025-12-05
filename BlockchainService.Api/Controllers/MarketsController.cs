@@ -1,4 +1,5 @@
-﻿using BlockchainService.Api.Models.Requests;
+﻿using Microsoft.AspNetCore.Authorization;
+using BlockchainService.Api.Models.Requests;
 using BlockchainService.Api.Models.Responses;
 using BlockchainService.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ public class MarketsController : ControllerBase
         _client = client;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("create")]
     public async Task<ActionResult<CreateMarketResponse>> Create([FromBody] CreateMarketRequest request)
     {
@@ -35,6 +37,7 @@ public class MarketsController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("{marketPubkey}/resolve")]
     public async Task<ActionResult<ResolveMarketResponse>> Resolve(string marketPubkey, [FromBody] ResolveMarketRequest request)
     {
