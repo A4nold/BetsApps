@@ -58,7 +58,7 @@ builder.Services.Configure<SolanaOptions>(builder.Configuration.GetSection("Sola
 builder.Services.AddSingleton<PredictionProgramClient>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

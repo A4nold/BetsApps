@@ -8,11 +8,11 @@ namespace BlockchainService.Api.Controllers;
 
 [ApiController]
 [Route("api/markets")]
-public class MarketsController : ControllerBase
+public class BlockchainController : ControllerBase
 {
     private readonly PredictionProgramClient _client;
 
-    public MarketsController(PredictionProgramClient client)
+    public BlockchainController(PredictionProgramClient client)
     {
         _client = client;
     }
@@ -51,7 +51,7 @@ public class MarketsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("{marketPubkey}/byte")]
+    [HttpPost("{marketPubkey}/bet")]
     public async Task<ActionResult<PlaceBetResponse>> PlaceBet(
         string marketPubkey,
         [FromBody] PlaceBetRequest request)

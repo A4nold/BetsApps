@@ -10,6 +10,7 @@ namespace AuthService.Infrastructure.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +39,12 @@ namespace AuthService.Infrastructure.Data
                 .HasOne(ur => ur.Role)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId);
+
+            //Many-to-One 
+            builder.Entity<User>()
+                .HasMany(u => u.RefreshTokens)
+                .WithOne(r => r.User)
+                .HasForeignKey(r => r.UserId);
 
             // Seed Roles
             builder.Entity<Role>().HasData(

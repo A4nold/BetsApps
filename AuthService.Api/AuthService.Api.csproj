@@ -21,4 +21,8 @@
     <ProjectReference Include="..\AuthService.Infrastructure\AuthService.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\" />
+  </ItemGroup>
+
 </Project>
