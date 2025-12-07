@@ -19,6 +19,7 @@ namespace MarketService.Domain.Entities
 
         public Guid CreatorUserId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public byte? WinningOutcomeIndex { get; set; }
         public DateTime? ResolvedAt { get; set; }
         public DateTime? SettledAt { get; set; }
 

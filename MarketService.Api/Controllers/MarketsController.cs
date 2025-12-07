@@ -1,8 +1,10 @@
-﻿using System.Security.Claims;
+﻿using MarketService.Domain.Commands;
+using MarketService.Domain.Entities;
 using MarketService.Domain.Interfaces;
 using MarketService.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MarketService.Api.Controllers;
 
@@ -17,6 +19,14 @@ public class MarketsController : ControllerBase
     {
         _marketService = marketService;
         _positionService = positionService;
+    }
+
+    //Helper
+    private Guid GetUserId() 
+    {
+        var sub = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                       ?? User.FindFirstValue("sub");
+        return Guid.Parse(sub);
     }
 
     [HttpGet]
@@ -52,7 +62,7 @@ public class MarketsController : ControllerBase
         return CreatedAtAction(nameof(GetMarket), new { id = market.Id }, market);
     }
 
-    [HttpPost("{marketId:guid/bet}")]
+    [HttpPost("{marketId:guid}/bet")]
     [Authorize]
     public async Task<ActionResult<PositionDto>> PlaceBet(
         Guid marketId, [FromBody] PlaceBetCommand command,
@@ -65,5 +75,25 @@ public class MarketsController : ControllerBase
 
         var position = await _positionService.PlaceBetAsync(marketId, userId, command, ct);
         return Ok(position);
+    }
+
+    [HttpPost("{marketId:guid}/resolve")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ResolveMarket(Guid marketId, 
+        [FromBody] byte winningOutcomeIndex, 
+        CancellationToken ct)
+    {
+        var userId = GetUserId();
+
+        var command = new ResolveMarketCommand
+        {
+            MarketId = marketId,
+            WinningOutcomeIndex = winningOutcomeIndex,
+            ResolverUserId = userId
+        };
+
+        var resolution = await _marketService.ResolveMarketAsync(command, ct);
+
+        return CreatedAtAction(nameof(ResolveMarket), new { id = resolution.Id }, resolution);
     }
 }

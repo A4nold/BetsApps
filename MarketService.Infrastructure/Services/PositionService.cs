@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Json;
+using MarketService.Domain.Entities;
 using MarketService.Domain.Interfaces;
 using MarketService.Domain.Models;
 using MarketService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Http.Json;
-using MarketService.Domain.Entities;
+using Microsoft.Extensions.Logging;
+using MarketService.Domain.Commands;
 
 namespace MarketService.Infrastructure.Services;
 
@@ -12,11 +15,18 @@ public class PositionService : IPositionService
 {
     private readonly MarketDbContext _db;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<PositionService> _logger;
 
-    public PositionService(MarketDbContext db)
+    public PositionService(MarketDbContext db, 
+        IHttpContextAccessor httpContextAccessor, 
+        IHttpClientFactory httpClientFactory,
+        ILogger<PositionService> logger)
     {
         _db = db;
+        _httpContextAccessor = httpContextAccessor;
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<PositionDto>> GetPositionsForUserAsync(Guid userId, CancellationToken ct = default)
@@ -72,6 +82,12 @@ public class PositionService : IPositionService
         //Call blockchain service to place bets on chain.
         var client = _httpClientFactory.CreateClient("BlockchainService");
 
+        var authHeader = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+        if (!string.IsNullOrWhiteSpace(authHeader))
+        {
+            client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(authHeader);
+        }
+
         var onChainRequest = new
         {
             outcomeIndex = command.OutcomeIndex,
@@ -80,7 +96,7 @@ public class PositionService : IPositionService
             vaultTokenAccount = command.VaultTokenAta
         };
 
-        var response = await client.PostAsJsonAsync($"/api/markets/{market.MarketPubKey}/bet",
+        var response = await client.PostAsJsonAsync($"api/markets/{market.MarketPubKey}/bet",
             onChainRequest, ct);
 
         if (!response.IsSuccessStatusCode)

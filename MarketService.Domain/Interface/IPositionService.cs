@@ -1,4 +1,5 @@
-﻿using MarketService.Domain.Models;
+﻿using MarketService.Domain.Commands;
+using MarketService.Domain.Models;
 
 namespace MarketService.Domain.Interfaces;
 

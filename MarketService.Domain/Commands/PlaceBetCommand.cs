@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarketService.Domain.Models
+namespace MarketService.Domain.Commands
 {
     public class PlaceBetCommand
     {
