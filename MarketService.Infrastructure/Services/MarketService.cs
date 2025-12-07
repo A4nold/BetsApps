@@ -233,7 +233,8 @@ public class MarketService : IMarketService
 
         var body = new
         {
-            bettorTokenAccount = command.BettorTokenAccount
+            userCollateralAta = command.BettorTokenAccount,
+            vaultTokenAccount = command.VaultTokenAccount,
         };
 
         var response = await client.PostAsJsonAsync(

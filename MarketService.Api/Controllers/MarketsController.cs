@@ -29,6 +29,12 @@ public class MarketsController : ControllerBase
         return Guid.Parse(sub);
     }
 
+    public sealed class ClaimWinningsRequest
+    {
+        public string BettorTokenAccount { get; set; } = default!;
+        public string VaultTokenAccount { get; set; } = default!;   
+    }
+
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<MarketDto>>> GetMarkets(CancellationToken ct)
@@ -95,5 +101,25 @@ public class MarketsController : ControllerBase
         var resolution = await _marketService.ResolveMarketAsync(command, ct);
 
         return CreatedAtAction(nameof(ResolveMarket), new { id = resolution.Id }, resolution);
+    }
+
+    [HttpPost("{marketId:guid}/claim")]
+    [Authorize]
+    public async Task<IActionResult> ClaimWinnings (Guid marketId, [FromBody] ClaimWinningsRequest request,
+        CancellationToken ct)
+    {
+        var userId = GetUserId();
+
+        var command = new ClaimWinningsCommand
+        {
+            MarketId = marketId,
+            UserId = userId,
+            BettorTokenAccount = request.BettorTokenAccount,
+            VaultTokenAccount = request.VaultTokenAccount
+        };
+
+        await _marketService.ClaimWinningsAsync(command, ct);
+
+        return NoContent();
     }
 }

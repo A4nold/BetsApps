@@ -7,4 +7,6 @@ public sealed class ClaimWinningsCommand
 
     // The bettor’s USDC token account on Solana
     public string BettorTokenAccount { get; init; } = default!;
+
+    public string VaultTokenAccount { get; init; } = default!;
 }
